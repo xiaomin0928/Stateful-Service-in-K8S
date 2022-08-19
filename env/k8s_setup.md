@@ -216,7 +216,7 @@ kubectl get pods -ns kubernetes-dashboard -o wide
 | kubernetes-dashboard-6cdd697d84-dzcdz            | 1/1      | Running    |      0     |   115s |   192.168.182.194   |  <none>    |     <none>       |
 
 You can use the dashboard in the browser(Please make sure you connect to the vpn of informatik)  
-if remind the connect is unsafe, please choose to ignore and continue
+if remind the connect is unsafe, please choose to ignore and continue  
 https://129.69.209.195:30000/#/login  
 
 create admin-user and binding role
