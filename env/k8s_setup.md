@@ -90,7 +90,6 @@ sudo mkdir -p /etc/systemd/system/docker.service.d
 # Create daemon json config file
 sudo tee /etc/docker/daemon.json <<EOF
 {
-  "exec-opts": ["native.cgroupdriver=systemd"],
   "log-driver": "json-file",
   "log-opts": {
     "max-size": "100m"
@@ -99,13 +98,13 @@ sudo tee /etc/docker/daemon.json <<EOF
 }
 EOF
 
+# set docker Cgroup Driver as systemd
+sudo sed -i "s#^ExecStart=/usr/bin/dockerd.*#ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock#g" /usr/lib/systemd/system/docker.service
+
 # Start and enable Services
 sudo systemctl daemon-reload 
 sudo systemctl restart docker
 sudo systemctl enable docker
-
-# set docker Cgroup Driver as systemd
-sudo sed -i "s#^ExecStart=/usr/bin/dockerd.*#ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock --exec-opt native.cgroupdriver=systemd#g" /usr/lib/systemd/system/docker.service
 
 # start the k8s
 systemctl enable kubelet && systemctl start kubelet
@@ -205,19 +204,19 @@ spec:
 
 ```sh
 
-kubectl apply -f recommand.yaml
+kubectl apply -f recommended.yaml
 
-kubectl get pods -ns kubernetes-dashboard -o wide
+kubectl get pods -n kubernetes-dashboard -o wide
 ```
 
-|                          NAME                    |   READY  |    STATUS  |  RESTARTS  |   AGE  |          IP         |    NODE    |   NOMINATED NODE |
-| ------------------------------------------------ | -------- | ---------- | ---------- | ------ | ------------------- | ---------- | -----------------|
-| dashboard-metrics-scraper-7bfdf779ff-72hqd       | 1/1      | Running    |      0     |   115s |   192.168.182.194   |  <none>    |     <none>       |
-| kubernetes-dashboard-6cdd697d84-dzcdz            | 1/1      | Running    |      0     |   115s |   192.168.182.194   |  <none>    |     <none>       |
+|                          NAME                    |   READY  |    STATUS  |  RESTARTS  |   AGE  |          IP         |      NODE    |   NOMINATED NODE |
+| ------------------------------------------------ | -------- | ---------- | ---------- | ------ | ------------------- | ------------ | -----------------|
+| dashboard-metrics-scraper-7bfdf779ff-b66mp       | 1/1      | Running    |      0     |   115s |   192.168.182.200   |  k8smavm01   |     <none>       |
+| kubernetes-dashboard-6cdd697d84-r9sfv            | 1/1      | Running    |      0     |   115s |   192.168.182.199   |  k8smavm01   |     <none>       |
 
 You can use the dashboard in the browser(Please make sure you connect to the vpn of informatik)  
-if remind the connect is unsafe, please choose to ignore and continue  
-https://129.69.209.195:30000/#/login  
+if remind the connect is unsafe, please choose to ignore and continue
+https://129.69.209.194:30000/#/login  
 
 create admin-user and binding role
 admin-user-sa.yaml:  
